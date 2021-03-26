@@ -1,0 +1,21 @@
+header {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Параметры тени */
+  padding: 10px;
+}
+
+.navigation {
+  display: flex;
+  list-style: none;
+}
+
+.NavLink {
+  margin-left: 20px;
+  text-decoration: none;
+  font-size: large;
+  color: black;
+}
+
+.NavLink-active {
+  font-size: large;
+  color: orange;
+}
