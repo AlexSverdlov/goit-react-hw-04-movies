@@ -56,10 +56,28 @@ class MovieDetailsPage extends Component {
         <h4>Additional information</h4>
         <ul>
           <li>
-            <Link to={`${this.props.match.url}/cast`}>Cast</Link>
+            <Link
+              to={{
+                pathname: `${this.props.match.url}/cast`,
+                state: {
+                  from: this.props.location,
+                },
+              }}
+            >
+              Cast
+            </Link>
           </li>
           <li>
-            <Link to={`${this.props.match.url}/reviews`}>Reviews</Link>
+            <Link
+              to={{
+                pathname: `${this.props.match.url}/reviews`,
+                state: {
+                  from: this.props.location,
+                },
+              }}
+            >
+              Reviews
+            </Link>
           </li>
         </ul>
         <hr />
