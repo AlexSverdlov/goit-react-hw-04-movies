@@ -21,12 +21,22 @@ class MovieDetailsPage extends Component {
     ).then(response => response.data);
     this.setState({ ...response });
   }
+
+  handleGoBack = () => {
+    const { location, history } = this.props;
+    if (location.state && location.state.from) {
+      history.push(location.state.from);
+    }
+  };
+
   render() {
     const aa = 'https://image.tmdb.org/t/p/w500' + this.state.poster_path;
     return (
       <>
+        <button type="button" onClick={this.handleGoBack}>
+          Go back
+        </button>
         <div className={styles.container}>
-          {/* <h1>fsddsffs {this.props.match.params.movieId}</h1>; */}
           <img src={aa} alt="" className={styles.image} />
           <div className={styles.containerAbout}>
             <h2>
