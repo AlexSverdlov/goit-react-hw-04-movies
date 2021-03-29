@@ -1,9 +1,16 @@
-import React, { Component } from 'react';
-import Axios from 'axios';
+import React, { Component, Suspense, lazy } from 'react';
 import { Route, Link } from 'react-router-dom';
-import Cast from '../components/Cast';
-import Reviews from '../components/Reviews';
+// import Cast from '../components/Cast';
+// import Reviews from '../components/Reviews';
 import styles from './MovieDetailsPage.module.css';
+import { fetchMovie } from '../services/todos-api';
+
+const Cast = lazy(() =>
+  import('../components/Cast' /* webpackChunkName: "Cast" */),
+);
+const Reviews = lazy(() =>
+  import('../components/Reviews' /* webpackChunkName: "Reviews" */),
+);
 
 class MovieDetailsPage extends Component {
   state = {
@@ -14,12 +21,13 @@ class MovieDetailsPage extends Component {
     genres: [],
   };
 
-  async componentDidMount() {
+  componentDidMount() {
     const { movieId } = this.props.match.params;
-    const response = await Axios.get(
-      `https://api.themoviedb.org/3/movie/${movieId}?api_key=bbc6386a0bc633f77c6faed806ceae64&language=en-US`,
-    ).then(response => response.data);
-    this.setState({ ...response });
+    fetchMovie(movieId)
+      .then(data => {
+        this.setState({ ...data });
+      })
+      .catch(err => console.log(err));
   }
 
   handleGoBack = () => {
@@ -60,7 +68,10 @@ class MovieDetailsPage extends Component {
               to={{
                 pathname: `${this.props.match.url}/cast`,
                 state: {
-                  from: this.props.location,
+                  from:
+                    this.props.location.state && this.props.location.state.from
+                      ? this.props.location.state.from
+                      : {},
                 },
               }}
             >
@@ -72,7 +83,10 @@ class MovieDetailsPage extends Component {
               to={{
                 pathname: `${this.props.match.url}/reviews`,
                 state: {
-                  from: this.props.location,
+                  from:
+                    this.props.location.state && this.props.location.state.from
+                      ? this.props.location.state.from
+                      : {},
                 },
               }}
             >
@@ -81,8 +95,13 @@ class MovieDetailsPage extends Component {
           </li>
         </ul>
         <hr />
-        <Route path={`${this.props.match.path}/cast`} component={Cast} />
-        <Route path={`${this.props.match.path}/reviews`} component={Reviews} />
+        <Suspense fallback={<h1>Загрузка...</h1>}>
+          <Route path={`${this.props.match.path}/cast`} component={Cast} />
+          <Route
+            path={`${this.props.match.path}/reviews`}
+            component={Reviews}
+          />
+        </Suspense>
       </>
     );
   }

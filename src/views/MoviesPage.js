@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import Axios from 'axios';
 import { Link } from 'react-router-dom';
 import queryString from 'query-string';
+import { fetchSearch } from '../services/todos-api';
 
 class MoviesPage extends Component {
   state = {
@@ -29,18 +29,17 @@ class MoviesPage extends Component {
     queryString.parse(props.location.search).query;
 
   getFromAPI = nextCategory => {
-    Axios.get(
-      `https://api.themoviedb.org/3/search/movie?api_key=bbc6386a0bc633f77c6faed806ceae64&query=${nextCategory}`,
-    )
-      .then(response => response.data.results)
-      .then(data => this.setState({ films: data, cursearch: '' }));
+    fetchSearch(nextCategory)
+      .then(data => this.setState({ films: data, cursearch: '' }))
+      .catch(err => console.log(err));
   };
 
   handleChange = e => {
     const { value } = e.currentTarget;
     this.setState({ cursearch: value });
   };
-  handleClick = e => {
+  handleSubmit = e => {
+    e.preventDefault();
     this.props.history.push({
       pathname: this.props.location.pathname,
       search: `query=${this.state.cursearch}`,
@@ -50,14 +49,14 @@ class MoviesPage extends Component {
   render() {
     return (
       <>
-        <input
-          type="text"
-          value={this.state.cursearch}
-          onChange={this.handleChange}
-        />
-        <button type="button" onClick={this.handleClick}>
-          Find
-        </button>
+        <form onSubmit={this.handleSubmit}>
+          <input
+            type="text"
+            value={this.state.cursearch}
+            onChange={this.handleChange}
+          />
+          <button type="submit">Find</button>
+        </form>
         <ul>
           {this.state.films.map(film => (
             <li key={film.id}>

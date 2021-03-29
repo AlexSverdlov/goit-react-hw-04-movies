@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import Axios from 'axios';
+import { fetchCast } from '../services/todos-api';
 
 class Cast extends Component {
   state = {
     cast: [],
   };
 
-  async componentDidMount() {
+  componentDidMount() {
     const { movieId } = this.props.match.params;
-    const response = await Axios.get(
-      `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=bbc6386a0bc633f77c6faed806ceae64&language=en-US`,
-    ).then(response => response.data);
-    this.setState({ ...response });
+    fetchCast(movieId)
+      .then(data => {
+        this.setState({ ...data });
+      })
+      .catch(err => console.log(err));
   }
 
   render() {

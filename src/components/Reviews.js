@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import Axios from 'axios';
+import { fetchReviews } from '../services/todos-api';
 
 class Reviews extends Component {
   state = {
     results: [],
   };
 
-  async componentDidMount() {
+  componentDidMount() {
     const { movieId } = this.props.match.params;
-    const response = await Axios.get(
-      `https://api.themoviedb.org/3/movie/${movieId}/reviews?api_key=bbc6386a0bc633f77c6faed806ceae64&language=en-US&page=1`,
-    ).then(response => response.data);
-    this.setState({ ...response });
+    fetchReviews(movieId)
+      .then(data => {
+        this.setState({ ...data });
+      })
+      .catch(err => console.log(err));
   }
 
   render() {
